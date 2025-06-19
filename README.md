@@ -85,10 +85,19 @@ npm start
 ---
 
 ### 📸 Screenshots
+Sure Yash — now that your new screenshots are uploaded and renamed properly, here's the updated Markdown block to paste into your `README.md`:
 
-| Editor + Chat + Video | Terminal + Session  |
-| --------------------- | ------------------- |
-| *(Add screenshots)*   | *(Add screenshots)* |
+---
+
+### 📸 Screenshots
+
+| Editor + Chat + Video                                       | Terminal + Session                    |
+| ----------------------------------------------------------- | ------------------------------------- |
+| ![Editor + Chat + Video](screenshots/editor-chat-video.png) | ![Terminal](screenshots/terminal.png) |
+
+| Welcome Screen                      | File Upload Dialog                       |
+| ----------------------------------- | ---------------------------------------- |
+| ![Welcome](screenshots/welcome.png) | ![Upload](screenshots/upload-dialog.png) |
 
 ---
 
