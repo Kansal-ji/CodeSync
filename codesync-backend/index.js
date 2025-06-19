@@ -1,15 +1,12 @@
-// index.js
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
+const mongoose = require('mongoose');
 require('dotenv').config();
 const http = require('http');
 const { Server } = require('socket.io');
 const pty = require('node-pty');
 const os = require('os');
-const mongoose = require('mongoose');
-const Session = require('express-session');
-
 
 const app = express();
 const server = http.createServer(app);
@@ -22,17 +19,23 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connection
+// Real Mongoose Session Model
+const sessionSchema = new mongoose.Schema({
+  roomId: String,
+  language: String,
+  code: String,
+  files: Array,
+});
+const Session = mongoose.model('Session', sessionSchema);
+
+//  MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-}).then(() => {
-  console.log('✅ MongoDB connected');
-}).catch((err) => {
-  console.error('❌ MongoDB connection error:', err);
-});
+}).then(() => console.log('✅ MongoDB connected'))
+  .catch((err) => console.error('❌ MongoDB error:', err));
 
-// Judge0 API
+// Judge0 Config
 const JUDGE0_API = 'https://judge0-ce.p.rapidapi.com/submissions';
 const headers = {
   'Content-Type': 'application/json',
@@ -44,18 +47,17 @@ app.post('/run', async (req, res) => {
   const { source_code, language_id, stdin } = req.body;
   try {
     const submission = await axios.post(
-      JUDGE0_API + '?base64_encoded=false&wait=true',
-      { source_code, language_id, stdin: stdin || '' },
+      `${JUDGE0_API}?base64_encoded=false&wait=true`,
+      { source_code, language_id, stdin },
       { headers }
     );
     res.json(submission.data);
   } catch (err) {
-    console.error(err.response?.data || err.message);
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Code execution failed' });
   }
 });
 
-// Save session
 app.post('/save', async (req, res) => {
   const { roomId, language, code, files } = req.body;
   try {
@@ -68,7 +70,6 @@ app.post('/save', async (req, res) => {
   }
 });
 
-// Load session
 app.get('/session/:roomId', async (req, res) => {
   try {
     const session = await Session.findOne({ roomId: req.params.roomId });
@@ -79,7 +80,7 @@ app.get('/session/:roomId', async (req, res) => {
   }
 });
 
-// Socket.IO
+// ✅ Socket.IO Handling
 io.on('connection', (socket) => {
   console.log('✅ User connected:', socket.id);
 
@@ -96,17 +97,14 @@ io.on('connection', (socket) => {
     socket.emit('terminal-data', data);
   });
 
-  socket.on('terminal-data', ({ data }) => {
+  socket.on('terminal-data', ({ roomId, data }) => {
+    socket.to(roomId).emit('terminal-data', data);
     ptyProcess.write(data);
-  });
-
-  socket.on('resize-terminal', ({ cols, rows }) => {
-    ptyProcess.resize(cols, rows);
   });
 
   socket.on('join', (roomId) => {
     socket.join(roomId);
-    console.log(`➡️  ${socket.id} joined room: ${roomId}`);
+    console.log(`➡️ ${socket.id} joined room: ${roomId}`);
     socket.to(roomId).emit('user-joined', socket.id);
   });
 
@@ -114,12 +112,16 @@ io.on('connection', (socket) => {
     socket.to(roomId).emit('code-update', code);
   });
 
+  socket.on('chat-message', ({ roomId, msg }) => {
+    socket.to(roomId).emit('chat-message', msg);
+  });
+
   socket.on('signal', ({ to, from, signal }) => {
     io.to(to).emit('signal', { from, signal });
   });
 
-  socket.on('chat-message', (msg) => {
-    socket.broadcast.emit('chat-message', msg);
+  socket.on('resize-terminal', ({ cols, rows }) => {
+    ptyProcess.resize(cols, rows);
   });
 
   socket.on('disconnect', () => {
