@@ -1,24 +1,24 @@
 
-# CodeSync 🔁💬🧠
+# CodeSync 
 
 > A real-time collaborative coding platform with code editing, chat, audio/video, virtual terminal, and session management — built for teams, classrooms, and hackathons.
 
 ---
 
-### 🚀 Features
+###  Features
 
-- 🔄 **Real-time Code Editor** with Monaco + Socket.IO
-- 💬 **Live Chat** for developer communication
-- 📹 **Audio/Video Sync** using WebRTC
-- 💻 **Virtual Terminal** for collaborative shell input
-- 💾 **Save & Load Sessions** to MongoDB
-- 🧠 **Session Generator** with unique session ID sharing
-- 📁 **Upload/Download Files** with correct code file extensions
-- 🧪 **Run Code** with Judge0 API (supports C, C++, Python, Java)
+-  **Real-time Code Editor** with Monaco + Socket.IO
+-  **Live Chat** for developer communication
+-  **Audio/Video Sync** using WebRTC
+-  **Virtual Terminal** for collaborative shell input
+-  **Save & Load Sessions** to MongoDB
+-  **Session Generator** with unique session ID sharing
+-  **Upload/Download Files** with correct code file extensions
+-  **Run Code** with Judge0 API (supports C, C++, Python, Java)
 
 ---
 
-### 📂 Project Structure
+###  Project Structure
 
 ```
 
@@ -89,7 +89,7 @@ Sure Yash — now that your new screenshots are uploaded and renamed properly, h
 
 ---
 
-### 📸 Screenshots
+###  Screenshots
 
 | Editor + Chat + Video                                       | Terminal + Session                    |
 | ----------------------------------------------------------- | ------------------------------------- |
@@ -101,7 +101,7 @@ Sure Yash — now that your new screenshots are uploaded and renamed properly, h
 
 ---
 
-### 🙌 Contributions
+###  Contributions
 
 PRs are welcome! To contribute:
 
@@ -122,3 +122,4 @@ MIT License
 
 [LinkedIn](https://www.linkedin.com/in/yashkansal/)
 [GitHub](https://github.com/Kansal-ji)
+[Profile](https://kansal-ji.github.io/Portfolio/)
