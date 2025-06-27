@@ -11,17 +11,19 @@ const os = require('os');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: '*' },
+  cors: { origin: '*' }, // replace with frontend URL if needed
 });
 
 const PORT = process.env.PORT || 5000;
 
-
-
-app.use(cors());
+app.use(cors({
+  origin: '*', // Replace with "https://code-sync-kansal.vercel.app" in production
+  methods: ["GET", "POST"],
+  credentials: true,
+}));
 app.use(express.json());
 
-// Real Mongoose Session Model
+// MongoDB Model
 const sessionSchema = new mongoose.Schema({
   roomId: String,
   language: String,
@@ -30,7 +32,7 @@ const sessionSchema = new mongoose.Schema({
 });
 const Session = mongoose.model('Session', sessionSchema);
 
-//  MongoDB Connection
+// MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -82,7 +84,7 @@ app.get('/session/:roomId', async (req, res) => {
   }
 });
 
-// ✅ Socket.IO Handling
+// ✅ Socket.IO Events
 io.on('connection', (socket) => {
   console.log('✅ User connected:', socket.id);
 
@@ -132,6 +134,7 @@ io.on('connection', (socket) => {
   });
 });
 
+// ✅ Listen on proper host/port for Render
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
