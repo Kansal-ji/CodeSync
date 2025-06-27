@@ -41,7 +41,7 @@ const languageOptions = {
   },
 };
 
-const socket = io("http://localhost:3000");
+const socket = io("https://codesync-2-kes6.onrender.com");
 
 function App() {
   const initialRoomId = window.location.pathname.slice(1) || "";
@@ -131,8 +131,7 @@ function App() {
     return () => socket.disconnect();
   }, [hasJoined]);
 
-
-    useEffect(() => {
+  useEffect(() => {
     if (terminalVisible && terminalContainerRef.current && !terminalRef.current) {
       const term = new Terminal({ cursorBlink: true, theme: { background: "#1e1e1e" } });
       terminalRef.current = term;
@@ -160,7 +159,7 @@ function App() {
   const handleRun = async () => {
     setOutput("Running...");
     try {
-      const response = await axios.post("http://localhost:3000/run", {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/run`, {
         source_code: code,
         language_id: languageOptions[language].id,
         stdin: userInput,
@@ -217,7 +216,7 @@ function App() {
 
   const handleSaveSession = async () => {
     try {
-      await axios.post("http://localhost:3000/save", {
+      await axios.post(`${process.env.REACT_APP_API_URL}/save`, {
         roomId: roomIdRef.current,
         language,
         code,
@@ -231,7 +230,7 @@ function App() {
 
   const handleLoadSession = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/session/${roomIdRef.current}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/session/${roomIdRef.current}`);
       const data = response.data;
       setLanguage(data.language);
       setCode(data.code);
@@ -291,7 +290,8 @@ function App() {
   }
 
 
-    return (
+
+      return (
     <div className="app-container">
       <div className="top-bar">
         <FaCode className="logo-icon" />
@@ -322,22 +322,26 @@ function App() {
           <button onClick={handleLoadSession}>📂 Load Session</button>
 
           <div className="toggle-btns">
-            <button onClick={() => {
-              const track = stream?.getAudioTracks()?.[0];
-              if (track) {
-                track.enabled = !track.enabled;
-                setMicEnabled(track.enabled);
-              }
-            }}>
+            <button
+              onClick={() => {
+                const track = stream?.getAudioTracks()?.[0];
+                if (track) {
+                  track.enabled = !track.enabled;
+                  setMicEnabled(track.enabled);
+                }
+              }}
+            >
               {micEnabled ? <FaMicrophone /> : <FaMicrophoneSlash />}
             </button>
-            <button onClick={() => {
-              const track = stream?.getVideoTracks()?.[0];
-              if (track) {
-                track.enabled = !track.enabled;
-                setVideoEnabled(track.enabled);
-              }
-            }}>
+            <button
+              onClick={() => {
+                const track = stream?.getVideoTracks()?.[0];
+                if (track) {
+                  track.enabled = !track.enabled;
+                  setVideoEnabled(track.enabled);
+                }
+              }}
+            >
               {videoEnabled ? <FaVideo /> : <FaVideoSlash />}
             </button>
           </div>
@@ -438,3 +442,4 @@ function App() {
 }
 
 export default App;
+
